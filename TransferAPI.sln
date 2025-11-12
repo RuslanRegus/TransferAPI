@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransferAPI", "TransferAPI\TransferAPI.csproj", "{EBFCAF1D-2FDB-4528-B1DA-0C0C8995ADE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBFCAF1D-2FDB-4528-B1DA-0C0C8995ADE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBFCAF1D-2FDB-4528-B1DA-0C0C8995ADE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBFCAF1D-2FDB-4528-B1DA-0C0C8995ADE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBFCAF1D-2FDB-4528-B1DA-0C0C8995ADE4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE111771-5012-4388-880D-9455C5747CFA}
+	EndGlobalSection
+EndGlobal
