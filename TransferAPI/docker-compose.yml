@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: transferapi_postgres
+    environment:
+      POSTGRES_PASSWORD: 1451
+      POSTGRES_DB: mydb
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+  transferapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transferapi_app
+    ports:
+      - "5000:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=mydb;Username=postgres;Password=1451
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: unless-stopped
+    
+volumes:
+  postgres_data:
+    driver: local

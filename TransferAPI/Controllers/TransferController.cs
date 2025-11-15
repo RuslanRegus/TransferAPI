@@ -51,11 +51,23 @@ namespace TransferAPI.Controllers
             using var dbTransaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                //1 check if both accounts exist
-                var fromAccount = await _context.Accounts
-                    .FirstOrDefaultAsync(a => a.id == transactionsDTO.from_account_id);
-                var toAccount = await _context.Accounts
-                    .FirstOrDefaultAsync(a => a.id == transactionsDTO.to_account_id);
+                // Lock accounts in a consistent order to prevent deadlocks
+                var minAccountId = Math.Min(transactionsDTO.from_account_id, transactionsDTO.to_account_id);
+                var maxAccountId = Math.Max(transactionsDTO.from_account_id, transactionsDTO.to_account_id);
+
+                // Lock BOTH accounts in one query, ordered by ID
+                var accounts = await _context.Accounts
+                    .FromSqlRaw(@"
+                        SELECT * FROM test.""Accounts"" 
+                        WHERE id IN ({0}, {1})
+                        ORDER BY id
+                        FOR UPDATE",
+                        minAccountId, maxAccountId)
+                    .ToListAsync();
+
+                // Now extract the specific accounts
+                var fromAccount = accounts.FirstOrDefault(a => a.id == transactionsDTO.from_account_id);
+                var toAccount = accounts.FirstOrDefault(a => a.id == transactionsDTO.to_account_id);
 
                 if (fromAccount == null)
                 {
@@ -69,14 +81,14 @@ namespace TransferAPI.Controllers
                     return NotFound($"Account with id {transactionsDTO.to_account_id} not found.");
                 }
 
-                //3 check if sender has enough money
+                //3 Check balance
                 if (fromAccount.balance < transactionsDTO.amount)
                 {
                     await dbTransaction.RollbackAsync();
                     return BadRequest("Insufficient funds.");
                 }
 
-                //4 reduce from sender
+                // Update balances
                 fromAccount.balance -= transactionsDTO.amount;
 
                 //5 add to receiver
